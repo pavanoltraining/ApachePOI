@@ -1,7 +1,7 @@
-package datadriventesting;
+package datadriven;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -23,13 +23,13 @@ public class XLUtility {
 	public XSSFRow row;
 	public XSSFCell cell;
 	public CellStyle style;   
-	String path=null;
+	String path;
 	
 	XLUtility(String path)
 	{
 		this.path=path;
 	}
-	
+		
 	public int getRowCount(String sheetName) throws IOException 
 	{
 		fi=new FileInputStream(path);
@@ -77,24 +77,37 @@ public class XLUtility {
 		return data;
 	}
 	
-	
-
 	public void setCellData(String sheetName,int rownum,int colnum,String data) throws IOException
-	{		
+	{
+		File xlfile=new File(path);
+		if(!xlfile.exists())    // If file not exists then create new file
+		{
+		workbook=new XSSFWorkbook();
+		fo=new FileOutputStream(path);
+		workbook.write(fo);
+		}
+				
 		fi=new FileInputStream(path);
 		workbook=new XSSFWorkbook(fi);
-		sheet=workbook.getSheet(sheetName);
+			
+		if(workbook.getSheetIndex(sheetName)==-1) // If sheet not exists then create new Sheet
+			workbook.createSheet(sheetName);
 		
+		sheet=workbook.getSheet(sheetName);
+					
+		if(sheet.getRow(rownum)==null)   // If row not exists then create new Row
+				sheet.createRow(rownum);
 		row=sheet.getRow(rownum);
+		
 		cell=row.createCell(colnum);
 		cell.setCellValue(data);
-		
 		fo=new FileOutputStream(path);
 		workbook.write(fo);		
 		workbook.close();
 		fi.close();
 		fo.close();
 	}
+	
 	
 	public void fillGreenColor(String sheetName,int rownum,int colnum) throws IOException
 	{
@@ -137,5 +150,5 @@ public class XLUtility {
 		fi.close();
 		fo.close();
 	}
-		
+	
 }

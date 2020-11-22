@@ -1,4 +1,4 @@
-package datadriventesting;
+package datadriven;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
